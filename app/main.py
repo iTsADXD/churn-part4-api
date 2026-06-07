@@ -32,10 +32,18 @@ def predict(data: CustomerFeatures):
     pred = int(prob >= 0.5)
     risk = "high" if prob >= 0.7 else "medium" if prob >= 0.4 else "low"
 
+    if risk == "high":
+        risk_explanation = "High churn risk due to recent activity and purchase patterns"
+    elif risk == "medium":
+        risk_explanation = "Moderate churn risk with mixed engagement signals"
+    else:
+        risk_explanation = "Low churn risk based on recent engagement and spend"
+
     return {
         "churn_probability": round(prob, 4),
         "predicted_class": pred,
-        "risk_level": risk
+        "risk_level": risk,
+        "risk_explanation": risk_explanation
     }
 
 @app.post("/batch_predict")

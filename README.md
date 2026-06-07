@@ -2,6 +2,10 @@
 
 A FastAPI-based machine learning API for customer churn scoring. The service exposes a health-check endpoint, a single-record prediction endpoint, and a batch prediction endpoint.[cite:3][cite:77]
 
+## Model and Source Data Notes
+
+This API uses a pre-trained churn prediction model stored in `model.pkl`. The model artifact was generated during the earlier modeling stage of the project and is loaded by the FastAPI app at runtime for inference. The training/source datasets used during development are not required to run this API, because predictions are served directly from the saved model file.
+
 ## Project Structure
 
 ```text
