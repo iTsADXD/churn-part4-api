@@ -1,75 +1,103 @@
-# Part 4 — FastAPI Churn Scoring Service & Reproducible ML Workflow
+# Churn Scoring API
 
-## Objective
-
-Expose the churn model through a simple FastAPI service for internal CRM or retention use.
+A FastAPI-based machine learning API for customer churn scoring. The service exposes a health-check endpoint, a single-record prediction endpoint, and a batch prediction endpoint.[cite:3][cite:77]
 
 ## Project Structure
 
-- `app/main.py` — FastAPI app with `/health`, `/predict`, and `/batch_predict`
-- `tests/test_api.py` — basic API tests
-- `monitoring_plan.md` — post-deployment monitoring and responsible-use notes
-- `requirements.txt` — reproducible dependency setup
-- `model.pkl` — trained model artifact from Part 3 (place in the repo root)
+```text
+churn-part4-api/
+├── app/
+│   ├── __init__.py
+│   └── main.py
+├── tests/
+│   └── test_api.py
+├── model.pkl
+├── monitoring_plan.md
+├── README.md
+└── requirements.txt
+```
 
-## Setup
+This repository is organized for Part 4 submission and contains the FastAPI app, tests, dependency file, monitoring plan, and trained model artifact.[cite:4][cite:3]
+
+## Features
+
+- `GET /health` returns a simple status response to confirm the API is running.[cite:77]
+- `POST /predict` scores one customer record and returns churn probability, predicted class, and risk level.[cite:3][cite:77]
+- `POST /batch_predict` scores multiple customer records in a single request.[cite:3][cite:76]
+- Swagger UI is available through FastAPI docs for interactive testing in the browser.[cite:77][web:47]
+
+## Installation
+
+1. Clone the repository.
+2. Open the project folder in VS Code or a terminal.
+3. Install dependencies:
 
 ```bash
-python -m venv venv
-source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Windows:
+4. Start the API server:
 
 ```bash
-venv\Scripts\activate
-pip install -r requirements.txt
+python -m uvicorn app.main:app --reload
 ```
 
-## Run the API
+FastAPI serves interactive API documentation at `http://127.0.0.1:8000/docs` by default.[web:47]
 
-Make sure `model.pkl` is present in the repository root.
+## API Endpoints
 
-```bash
-uvicorn app.main:app --reload
-```
+| Method | Endpoint | Purpose |
+|--------|----------|---------|
+| GET | `/health` | Check whether the API is running.[cite:77] |
+| POST | `/predict` | Predict churn for one customer record.[cite:3] |
+| POST | `/batch_predict` | Predict churn for multiple customer records.[cite:3] |
 
-Open docs at:
+## Sample Request
 
-- `http://127.0.0.1:8000/docs`
-
-## Endpoints
-
-### `GET /health`
-Returns service health and model file status.
-
-### `POST /predict`
-Scores one customer payload.
-
-Sample body:
+### Single Prediction
 
 ```json
 {
-  "customer_id": "CUST0001",
-  "recency_days": 95,
-  "total_orders": 3,
-  "total_spend": 2400,
-  "avg_discount": 0.28,
-  "return_rate": 0.10,
-  "ticket_count": 1,
-  "sessions_30d": 2,
-  "loyalty_tier": "Silver",
-  "acquisition_channel": "Paid Search",
-  "segment_name": "At Risk"
+  "recencydays": 10,
+  "frequency180d": 5,
+  "monetary180d": 200.0,
+  "sessions30d": 3,
+  "lastvisitdaysago": 2
 }
 ```
 
-### `POST /batch_predict`
-Scores multiple customer payloads in one request.
+### Sample Response
 
-## Notes
+```json
+{
+  "churn_probability": 0.29,
+  "predicted_class": 0,
+  "risk_level": "low"
+}
+```
 
-- The app expects `model.pkl` from Part 3.
-- Prediction output includes churn probability, predicted class, and a short risk explanation.
-- Input validation is handled with Pydantic.
+The live API testing screenshots showed successful 200 responses for `/predict`, `/batch_predict`, and `/health` during validation.[file:107][file:102][file:124]
+
+## Running Tests
+
+Run the automated tests with:
+
+```bash
+python -m pytest
+```
+
+The current test suite checks `/health`, `/predict`, and `/batch_predict` responses.[file:92][cite:3]
+
+## Monitoring
+
+Operational and responsible-use notes are documented in `monitoring_plan.md` as part of the Part 4 deliverables.[cite:3]
+
+## Tech Stack
+
+- FastAPI
+- Uvicorn
+- scikit-learn
+- Pydantic
+- pytest
+
+These dependencies align with the current API implementation and test workflow.[web:126][web:37]
